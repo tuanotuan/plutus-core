@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  influxdb:
+    image: influxdb:2.7
+    container_name: plutus_influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+      - influxdb_config:/etc/influxdb2
+    environment:
+      - INFLUXDB_INIT_MODE=setup
+      - INFLUXDB_INIT_USERNAME=tuanotuan
+      - INFLUXDB_INIT_PASSWORD=Ngoctuan@2005
+      - INFLUXDB_INIT_ORG=algotrade
+      - INFLUXDB_INIT_BUCKET=market_data
+      - INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+    restart: always
+
+volumes:
+  influxdb_data:
+  influxdb_config:
