@@ -28,7 +28,18 @@ class VWAPEngine {
         for(int i = 0; i < num_threads; i++){
             int start = i * chunk_size;
             int end = (i == num_threads - 1) ? total_ticks : (i + 1) * chunk_size;
+            threads.emplace_back(calculateChunk, std::cref(prices), std::cref(vols), start, end, std::ref(results[i]));
         }
+        for(auto& t : threads){
+            t.join();
+        }
+        double total_sumpv = 0;
+        double total_sumv = 0;
+        for(const auto& r : results){
+            total_sumpv += r.sumpv;
+            total_sumv += r.sumv;
+        }
+        return total_sumv == 0 ? 0.0 : total_sumpv / total_sumv;
     }
 };
 int main(){
