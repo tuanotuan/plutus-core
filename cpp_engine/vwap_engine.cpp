@@ -43,5 +43,14 @@ class VWAPEngine {
     }
 };
 int main(){
+    int DATA_SIZE = 1000000;
+    std::vector<double> prices(DATA_SIZE, 100.0);
+    std::vector<double> volumes(DATA_SIZE, 10.0);
+    auto start_time = std::chrono::high_resolution_clock::now();
+    double vwap = VWAPEngine::computeVwapMultithread(prices, volumes, 4);
+    auto end_time = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> elapsed = end_time - start_time;
+    std::cout << "VWAP: " << vwap << std::endl;
+    std::cout << "Elapsed time: " << elapsed.count() << " ms" << std::endl;
     return 0;
 }
