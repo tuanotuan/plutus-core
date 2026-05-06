@@ -13,6 +13,7 @@ class VWAPEngine {
         double sumpv = 0;
         double sumv = 0;
         for (int i = start; i < end; ++i) {
+            // luu ket qua vao thanh ghi
             sumpv += prices[i] * volumes[i];
             sumv += volumes[i];
         }
@@ -28,6 +29,10 @@ class VWAPEngine {
         for(int i = 0; i < num_threads; i++){
             int start = i * chunk_size;
             int end = (i == num_threads - 1) ? total_ticks : (i + 1) * chunk_size;
+            // perfect forwarding thay vi push_back
+            // dung vo boc tham chieu de ko tu dong copy
+            // ref cho phep doc va sua
+            // cref chi cho phep doc, ko sua
             threads.emplace_back(calculateChunk, std::cref(prices), std::cref(vols), start, end, std::ref(results[i]));
         }
         for(auto& t : threads){
@@ -46,9 +51,11 @@ int main(){
     int DATA_SIZE = 1000000;
     std::vector<double> prices(DATA_SIZE, 100.0);
     std::vector<double> volumes(DATA_SIZE, 10.0);
+    // lay thoi gian truc tiep tu thanh ghi cpu
     auto start_time = std::chrono::high_resolution_clock::now();
     double vwap = VWAPEngine::computeVwapMultithread(prices, volumes, 4);
     auto end_time = std::chrono::high_resolution_clock::now();
+    // ep kieu nano sang ms
     std::chrono::duration<double, std::milli> elapsed = end_time - start_time;
     std::cout << "VWAP: " << vwap << std::endl;
     std::cout << "Elapsed time: " << elapsed.count() << " ms" << std::endl;
