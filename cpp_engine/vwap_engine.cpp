@@ -9,7 +9,8 @@ struct chunkResult{
 };
 class VWAPEngine {
     public:
-    static void calculateChunk(const std::vector<double>& prices, const std::vector<double>& volumes, int start, int end, chunkResult& result) {
+    // dung const double * de nhan thang du lieu tu RAM cua Python
+    static void calculateChunk(const double *prices, const double *volumes, int start, int end, chunkResult& result) {
         double sumpv = 0;
         double sumv = 0;
         for (int i = start; i < end; ++i) {
@@ -20,8 +21,7 @@ class VWAPEngine {
         result.sumpv = sumpv;
         result.sumv = sumv;
     }
-    static double computeVwapMultithread(const std::vector<double>& prices, const std::vector<double>& vols, int num_threads){
-        int total_ticks = prices.size();
+    static double computeVwapMultithread(const double *prices, const double *volumes, int total_ticks, int num_threads){
         if(total_ticks == 0) return 0.0;
         std::vector < std::thread > threads;
         std::vector < chunkResult > results(num_threads);
@@ -47,13 +47,19 @@ class VWAPEngine {
         return total_sumv == 0 ? 0.0 : total_sumpv / total_sumv;
     }
 };
+// ham nay se duoc goi tu Python, nen can dung extern "C" de tranh name mangling
+extern "C" {
+    double run_vwap_engine(const double *prices, const double *volumes, int total_ticks, int num_threads) {
+        return VWAPEngine::computeVwapMultithread(prices, volumes, total_ticks, num_threads);
+    }
+}
 int main(){
     int DATA_SIZE = 1000000;
     std::vector<double> prices(DATA_SIZE, 100.0);
     std::vector<double> volumes(DATA_SIZE, 10.0);
     // lay thoi gian truc tiep tu thanh ghi cpu
     auto start_time = std::chrono::high_resolution_clock::now();
-    double vwap = VWAPEngine::computeVwapMultithread(prices, volumes, 4);
+    double vwap = VWAPEngine::computeVwapMultithread(prices.data(), volumes.data(), DATA_SIZE, 4);
     auto end_time = std::chrono::high_resolution_clock::now();
     // ep kieu nano sang ms
     std::chrono::duration<double, std::milli> elapsed = end_time - start_time;
