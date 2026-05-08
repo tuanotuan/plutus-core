@@ -33,7 +33,7 @@ class VWAPEngine {
             // dung vo boc tham chieu de ko tu dong copy
             // ref cho phep doc va sua
             // cref chi cho phep doc, ko sua
-            threads.emplace_back(calculateChunk, std::cref(prices), std::cref(vols), start, end, std::ref(results[i]));
+            threads.emplace_back(calculateChunk,prices, volumes, start, end, std::ref(results[i]));
         }
         for(auto& t : threads){
             t.join();
@@ -48,11 +48,13 @@ class VWAPEngine {
     }
 };
 // ham nay se duoc goi tu Python, nen can dung extern "C" de tranh name mangling
+// dong vai tro nhu cong giao tiep
 extern "C" {
     double run_vwap_engine(const double *prices, const double *volumes, int total_ticks, int num_threads) {
         return VWAPEngine::computeVwapMultithread(prices, volumes, total_ticks, num_threads);
     }
 }
+#ifdef BUILD_TEST
 int main(){
     int DATA_SIZE = 1000000;
     std::vector<double> prices(DATA_SIZE, 100.0);
@@ -67,3 +69,4 @@ int main(){
     std::cout << "Elapsed time: " << elapsed.count() << " ms" << std::endl;
     return 0;
 }
+#endif
