@@ -19,4 +19,4 @@ class DataLoader:
         # tiet kiem cpu va ram
         timestamps_np = df['Timestamp'].values
 
-        return prices_np, volumes_np
+        return prices_np, volumes_np, timestamps_np
