@@ -5,6 +5,7 @@ import pandas as pd
 from config.config import backTestConfig
 from data_loader import DataLoader
 from backtesting import CppEngineBridge, BacktestEngine
+from evaluation import Evaluator
 
 if __name__ == "__main__":
     sample_data = {
@@ -28,13 +29,16 @@ if __name__ == "__main__":
         trade_history = backtester.run_strategy()
         elapsed = (time.time() - start_time) * 1000
         
-        print(f"\n[Thời gian hoàn thành]: {elapsed:.3f} ms")
+        print(f"\n[⚡] Thời gian hoàn thành vòng lặp C++: {elapsed:.3f} ms")
         print("\n=== NHẬT KÝ GIAO DỊCH ===")
         if not trade_history.empty:
             print(trade_history.to_string(index=False))
+            
+            # GỌI TRẠM ĐÁNH GIÁ
+            evaluator = Evaluator(trade_history, prices, timestamps, config.INITIAL_CAPITAL)
+            evaluator.generate_report()
         else:
             print("Không có giao dịch.")
-        print(f"\n [SỐ DƯ CUỐI CÙNG]: ${backtester.cash:,.2f}")
             
     except Exception as e:
         print(f"[!] Lỗi: {e}")
