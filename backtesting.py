@@ -34,8 +34,9 @@ class BacktestEngine:
         self.timestamps = timestamps
         self.config = config
         
-        # Khởi tạo sổ kế toán từ config
         self.cash = self.config.INITIAL_CAPITAL
+        # long - only
+        # position = 0.0: chua co lenh, 1.0: da mua, -1.0: da ban (short)
         self.position = 0.0 
         self.trade_log = [] 
         
@@ -47,24 +48,23 @@ class BacktestEngine:
             print("[-] Dữ liệu quá ngắn.")
             return pd.DataFrame()
             
-        # VÒNG LẶP TRƯỢT THỜI GIAN (Chống Look-ahead Bias)
         for i in range(window, total_ticks):
             
-            # 1. Cắt lát dữ liệu quá khứ (Từ t-window đến t-1)
+            # du lieu qua khu de tinh VWAP (chua bao gom tick hien tai)
+            # tinh tu dong 0 den i-1, co do dai bang window size
             slice_prices = self.prices[i-window : i]
             slice_volumes = self.volumes[i-window : i]
             
-            # 2. Gọi C++ tính VWAP
+            # trung binh qua khu de tinh VWAP, goi C++ engine
             current_vwap = self.engine.compute(slice_prices, slice_volumes, self.config.NUM_THREADS)
-            
             current_price = self.prices[i]
             current_time = self.timestamps[i]
             
-            # 3. Logic Giao Dịch & Trừ Phí (Fee)
+            # giua vao current_price va current_vwap de quyet dinh mua ban
             if current_price > current_vwap and self.position == 0:
                 self.position = 1.0 
                 fee = current_price * self.config.FEE_RATE
-                self.cash -= (current_price + fee) # Mua thì bị trừ thêm tiền phí
+                self.cash -= (current_price + fee)
                 self.trade_log.append({
                     'Timestamp': current_time, 'Action': 'BUY', 
                     'Price': current_price, 'Fee': fee, 'PnL': 0.0
@@ -72,7 +72,7 @@ class BacktestEngine:
                 
             elif current_price < current_vwap and self.position > 0:
                 fee = current_price * self.config.FEE_RATE
-                self.cash += (current_price - fee) # Bán thì thu về ít hơn do trừ phí
+                self.cash += (current_price - fee)
                 
                 entry_price = self.trade_log[-1]['Price']
                 profit = (current_price - entry_price) - fee - self.trade_log[-1]['Fee']
