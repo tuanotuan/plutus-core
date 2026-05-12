@@ -46,6 +46,76 @@ class VWAPEngine {
         }
         return total_sumv == 0 ? 0.0 : total_sumpv / total_sumv;
     }
+    static void optimizeGridSearchMultithread(
+        const double* prices, const double* volumes, int total_ticks,
+        int min_window, int max_window,
+        double initial_capital, double fee_rate, int num_threads,
+        double* out_returns
+    ) {
+        int num_windows = max_window - min_window + 1;
+        
+        auto worker = [&](int start_idx, int end_idx) {
+            for (int w_idx = start_idx; w_idx < end_idx; ++w_idx) {
+                int window = min_window + w_idx;
+                if (window >= total_ticks) {
+                    out_returns[w_idx] = 0.0;
+                    continue;
+                }
+
+                double cash = initial_capital;
+                double position = 0.0; 
+                
+                double sum_pv = 0.0;
+                double sum_v = 0.0;
+                for (int j = 0; j < window; ++j) {
+                    sum_pv += prices[j] * volumes[j];
+                    sum_v += volumes[j];
+                }
+                for (int i = window; i < total_ticks; ++i) {
+                    // phong khi sap san
+                    double vwap = (sum_v > 0) ? (sum_pv / sum_v) : prices[i-1];
+                    double current_price = prices[i];
+
+                    if (current_price > vwap && position == 0.0) {
+                        position = 1.0;
+                        cash -= (current_price + current_price * fee_rate);
+                    } 
+                    else if (current_price < vwap && position > 0.0) {
+                        cash += (current_price - current_price * fee_rate);
+                        position = 0.0;
+                    }
+
+                    // tinh tien cua so
+                    sum_pv += (prices[i] * volumes[i]) - (prices[i - window] * volumes[i - window]);
+                    sum_v += volumes[i] - volumes[i - window];
+                }
+                
+                // liquadate cuoi ky neu con hold
+                if (position > 0.0) {
+                    cash += (prices[total_ticks - 1] - prices[total_ticks - 1] * fee_rate);
+                }
+                // ghi ket qua vao ram cua Python
+                out_returns[w_idx] = ((cash - initial_capital) / initial_capital) * 100.0;
+            }
+        };
+
+        std::vector<std::thread> threads;
+        int chunk_size = num_windows / num_threads;
+        int remainder = num_windows % num_threads;
+        int current_start = 0;
+
+        for (int i = 0; i < num_threads; ++i) {
+            int current_end = current_start + chunk_size + (i < remainder ? 1 : 0);
+            if (current_start < current_end) {
+                threads.emplace_back(worker, current_start, current_end);
+            }
+            current_start = current_end;
+        }
+
+        for (auto& t : threads) {
+            if(t.joinable()) t.join();
+        }
+    }
 };
 // ham nay se duoc goi tu Python, nen can dung extern "C" de tranh name mangling
 // dong vai tro nhu cong giao tiep
