@@ -8,6 +8,12 @@ class DataLoader:
     def load_and_clean(self):
         print(f"[*] Đang nạp dữ liệu từ: {self.file_path} ...")
         df = pd.read_csv(self.file_path)
+        df = df.rename(columns={
+            'Close': 'Latest Matched Price',
+            'Volume': 'Latest Matched Quantity'
+        })
+        # chuyen cot Datetime sang Timestamp (int64) de truyen sang C++
+        df['Timestamp'] = pd.to_datetime(df['Datetime']).astype('int64')
         # loai bo cac dong thieu du lieu
         df = df.dropna(subset=['Latest Matched Price', 'Latest Matched Quantity'])
         # loai bo cac dong co volume = 0 (khong tinh vao VWAP)
