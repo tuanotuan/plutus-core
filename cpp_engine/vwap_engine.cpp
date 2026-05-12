@@ -98,13 +98,14 @@ class VWAPEngine {
                 out_returns[w_idx] = ((cash - initial_capital) / initial_capital) * 100.0;
             }
         };
-
+// load balancing cho threads
         std::vector<std::thread> threads;
         int chunk_size = num_windows / num_threads;
         int remainder = num_windows % num_threads;
         int current_start = 0;
 
         for (int i = 0; i < num_threads; ++i) {
+            // xu li task du thua
             int current_end = current_start + chunk_size + (i < remainder ? 1 : 0);
             if (current_start < current_end) {
                 threads.emplace_back(worker, current_start, current_end);
@@ -120,8 +121,19 @@ class VWAPEngine {
 // ham nay se duoc goi tu Python, nen can dung extern "C" de tranh name mangling
 // dong vai tro nhu cong giao tiep
 extern "C" {
+    // wvap don gian
     double run_vwap_engine(const double *prices, const double *volumes, int total_ticks, int num_threads) {
         return VWAPEngine::computeVwapMultithread(prices, volumes, total_ticks, num_threads);
+    }
+    // grid search toi uu hoa
+    void optimize_grid_search(const double* prices, const double* volumes, int total_ticks,
+        int min_window, int max_window,
+        double initial_capital, double fee_rate, int num_threads,
+        double* out_returns) {
+        VWAPEngine::optimizeGridSearchMultithread(prices, volumes, total_ticks,
+            min_window, max_window,
+            initial_capital, fee_rate, num_threads,
+            out_returns);
     }
 }
 #ifdef BUILD_TEST
