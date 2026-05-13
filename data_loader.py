@@ -9,15 +9,15 @@ class DataLoader:
         print(f"[*] Đang nạp dữ liệu từ: {self.file_path} ...")
         df = pd.read_csv(self.file_path)
         # chuyen cot Datetime sang Timestamp (int64) de truyen sang C++
-        df['Timestamp'] = pd.to_datetime(df['Datetime']).astype('int64')
+        df['Timestamp'] = pd.to_datetime(df['datetime']).astype('int64')
         # loai bo cac dong thieu du lieu
-        df = df.dropna(subset=['Latest Matched Price', 'Latest Matched Quantity'])
+        df = df.dropna(subset=['price', 'quantity'])
         # loai bo cac dong co volume = 0 (khong tinh vao VWAP)
-        df = df[df['Latest Matched Quantity'] > 0]
+        df = df[df['quantity'] > 0]
         print(f"[+] Dữ liệu sạch: {len(df)} ticks sẵn sàng.")
         # ep kieu va tao numpy arrays lien tuc trong RAM de truyen sang C++
-        prices_np = np.ascontiguousarray(df['Latest Matched Price'].values, dtype=np.float64)
-        volumes_np = np.ascontiguousarray(df['Latest Matched Quantity'].values, dtype=np.float64)
+        prices_np = np.ascontiguousarray(df['price'].values, dtype=np.float64)
+        volumes_np = np.ascontiguousarray(df['quantity'].values, dtype=np.float64)
         # tiet kiem cpu va ram
         timestamps_np = df['Timestamp'].values
 

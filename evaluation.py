@@ -65,7 +65,8 @@ class Evaluator:
         
         # bieu do hpr
         plt.figure(figsize=(10, 5))
-        plt.plot(self.timestamps, hpr * 100, color="blue", linewidth=1.5)
+        time_series = pd.to_datetime(self.timestamps, unit='ns')
+        plt.plot(time_series, hpr * 100, color="blue", linewidth=1.5)
         plt.title("Holding Period Return Over Time")
         plt.xlabel("Time Step")
         plt.ylabel("Holding Period Return (%)")
@@ -75,8 +76,8 @@ class Evaluator:
         
         # bieu do mdd
         plt.figure(figsize=(10, 5))
-        plt.fill_between(self.timestamps, drawdown_series * 100, 0, color="red", alpha=0.3)
-        plt.plot(self.timestamps, drawdown_series * 100, color="red", linewidth=1)
+        plt.fill_between(time_series, drawdown_series * 100, 0, color="red", alpha=0.3)
+        plt.plot(time_series, drawdown_series * 100, color="red", linewidth=1)
         plt.title("Draw down Value Over Time")
         plt.xlabel("Time Step")
         plt.ylabel("Percentage (%)")

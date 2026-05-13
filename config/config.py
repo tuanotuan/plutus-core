@@ -4,5 +4,5 @@ class backTestConfig:
     FEE_RATE = 0.0005 # phi giao dich tai SSI
     SLIPPAGE = 0.0 # truot gia (dung o paper trading)
     # cau hinh thuat toan VWAP
-    WINDOW_SIZE = 3 # so luong tick
+    WINDOW_SIZE = 996 # so luong tick
     NUM_THREADS = 1 # so luong thread C++ de chay VWAP engine

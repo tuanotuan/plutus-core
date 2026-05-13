@@ -11,7 +11,7 @@ from evaluation import Evaluator
 if __name__ == "__main__":
 
     config = backTestConfig()
-    loader = DataLoader("raw_market_data.csv")
+    loader = DataLoader("data/is/VN30F1M_data.csv")
     engine_bridge = CppEngineBridge("./cpp_engine/vwap_engine.so")
 
     try:
