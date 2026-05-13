@@ -1,0 +1,6 @@
+{
+    "best_window": 462,
+    "in_sample_return_pct": -5.527552674999926,
+    "out_of_sample_return_pct": -0.2775777599999856,
+    "status": "OVERFITTED"
+}
