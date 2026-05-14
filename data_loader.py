@@ -14,6 +14,7 @@ class DataLoader:
         df = df.dropna(subset=['price', 'quantity'])
         # loai bo cac dong co volume = 0 (khong tinh vao VWAP)
         df = df[df['quantity'] > 0]
+        df = df.sort_values(by='Timestamp', ascending=True).reset_index(drop=True)
         print(f"[+] Dữ liệu sạch: {len(df)} ticks sẵn sàng.")
         # ep kieu va tao numpy arrays lien tuc trong RAM de truyen sang C++
         prices_np = np.ascontiguousarray(df['price'].values, dtype=np.float64)
