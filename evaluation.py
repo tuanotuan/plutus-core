@@ -44,7 +44,7 @@ class Evaluator:
             
         return pd.Series(nav_records)
 
-    def generate_report(self):
+    def generate_report(self, title_suffix=""):
         # giai thich: reconstruct_nav() se duoc goi de tinh toan NAV theo tung tick
         # sau do su dung cac ham metric de tinh toan chi so hpr, mdd, sharpe, sortino.
         nav_series = self.reconstruct_nav()
@@ -68,11 +68,11 @@ class Evaluator:
         plt.figure(figsize=(10, 5))
         time_series = pd.to_datetime(self.timestamps, unit='ns')
         plt.plot(time_series, hpr * 100, color="blue", linewidth=1.5)
-        plt.title("Holding Period Return Over Time")
+        plt.title(f"Holding Period Return Over Time {title_suffix}")
         plt.xlabel("Time Step")
         plt.ylabel("Holding Period Return (%)")
         plt.grid(True, linestyle='--', alpha=0.6)
-        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
         plt.gca().xaxis.set_major_locator(mdates.AutoDateLocator())
         plt.gcf().autofmt_xdate()
         plt.savefig("result/backtest/hpr.svg", format="svg")
@@ -86,7 +86,7 @@ class Evaluator:
         plt.xlabel("Time Step")
         plt.ylabel("Percentage (%)")
         plt.grid(True, linestyle='--', alpha=0.6)
-        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
         plt.gca().xaxis.set_major_locator(mdates.AutoDateLocator())
         plt.gcf().autofmt_xdate()
         plt.savefig("result/backtest/drawdown.svg", format="svg")

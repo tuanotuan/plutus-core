@@ -9,7 +9,8 @@ class DataLoader:
         print(f"[*] Đang nạp dữ liệu từ: {self.file_path} ...")
         df = pd.read_csv(self.file_path)
         # chuyen cot Datetime sang Timestamp (int64) de truyen sang C++
-        df['Timestamp'] = pd.to_datetime(df['datetime']).astype('int64')
+        df['datetime'] = pd.to_datetime(df['datetime'])
+        df['Timestamp'] = df['datetime'].astype('datetime64[ns]').astype('int64')
         # loai bo cac dong thieu du lieu
         df = df.dropna(subset=['price', 'quantity'])
         # loai bo cac dong co volume = 0 (khong tinh vao VWAP)

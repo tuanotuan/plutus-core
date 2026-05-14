@@ -82,13 +82,13 @@ def evaluate_and_plot_oos(trade_history, prices, timestamps, initial_capital, be
     # 4. Vẽ biểu đồ HPR
     plt.figure(figsize=(12, 6))
     plt.plot(time_series, hpr * 100, color="blue", linewidth=1.5)
-    plt.title(f"Out-of-Sample HPR (VWAP Window: {best_window}) - 30% Cuối", fontsize=14, fontweight='bold')
-    plt.xlabel("Thời gian Thực tế", fontsize=12)
-    plt.ylabel("Return (%)", fontsize=12)
+    plt.title(f"Holding Period Return Over Time", fontsize=14, fontweight='bold')
+    plt.xlabel("Time Step", fontsize=12)
+    plt.ylabel("Percentage (%)", fontsize=12)
     plt.grid(True, linestyle='--', alpha=0.6)
     
     # Ép chuẩn mốc thời gian cho trục X
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     plt.gca().xaxis.set_major_locator(mdates.AutoDateLocator())
     plt.gcf().autofmt_xdate() # Xoay nghiêng chữ cho không đè lên nhau
     
@@ -101,13 +101,13 @@ def evaluate_and_plot_oos(trade_history, prices, timestamps, initial_capital, be
     plt.fill_between(time_series, drawdown_series * 100, 0, color="red", alpha=0.3)
     time_series = pd.to_datetime(timestamps, unit='ns')
     plt.plot(time_series, drawdown_series * 100, color="red", linewidth=1)
-    plt.title("Out-of-Sample Drawdown - 30% Cuối", fontsize=14, fontweight='bold')
-    plt.xlabel("Thời gian Thực tế", fontsize=12)
-    plt.ylabel("Sụt giảm (%)", fontsize=12)
+    plt.title("Drawdown Value Over Time", fontsize=14, fontweight='bold')
+    plt.xlabel("Time Step", fontsize=12)
+    plt.ylabel("Percentage (%)", fontsize=12)
     plt.grid(True, linestyle='--', alpha=0.6)
     
     # Ép chuẩn mốc thời gian cho trục X
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     plt.gca().xaxis.set_major_locator(mdates.AutoDateLocator())
     plt.gcf().autofmt_xdate()
     
