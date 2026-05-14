@@ -3,6 +3,7 @@
 import time
 import json
 import pandas as pd
+import os
 from config.config import backTestConfig
 from data_loader import DataLoader
 from backtesting import CppEngineBridge, BacktestEngine
@@ -11,6 +12,15 @@ from evaluation import Evaluator
 if __name__ == "__main__":
 
     config = backTestConfig()
+    opt_file = "parameter/optimized_parameter.json"
+    if os.path.exists(opt_file):
+        with open(opt_file, "r") as f:
+            opt_res = json.load(f)
+            config.WINDOW_SIZE = opt_res.get("best_window", config.WINDOW_SIZE)
+            print(f"[*] HỆ THỐNG THÔNG MINH: Đã nạp WINDOW_SIZE = {config.WINDOW_SIZE} từ Optimization.")
+    else:
+        print(f"[!] CẢNH BÁO: Không thấy file tối ưu. Chạy với Window mặc định = {config.WINDOW_SIZE}")
+    # ----------------------------------------
     loader = DataLoader("data/is/VN30F1M_data.csv")
     engine_bridge = CppEngineBridge("./cpp_engine/vwap_engine.so")
 

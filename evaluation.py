@@ -2,6 +2,7 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 from metrics.metric import calculate_mdd, calculate_hpr, calculate_sharpe, calculate_sortino
 
 class Evaluator:
@@ -82,5 +83,8 @@ class Evaluator:
         plt.xlabel("Time Step")
         plt.ylabel("Percentage (%)")
         plt.grid(True, linestyle='--', alpha=0.6)
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+        plt.gca().xaxis.set_major_locator(mdates.AutoDateLocator())
+        plt.gcf().autofmt_xdate()
         plt.savefig("result/backtest/drawdown.svg", format="svg")
         plt.close()
