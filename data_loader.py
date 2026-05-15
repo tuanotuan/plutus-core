@@ -1,4 +1,4 @@
-# xu li data
+# data_loader.py
 import pandas as pd
 import numpy as np
 class DataLoader:
