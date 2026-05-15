@@ -1,4 +1,4 @@
-### PROTO:Plutus Core
+### Plutus Core
 #### High-Performance VWAP Momentum Engine
 A high-frequency algorithmic trading system combining Python flexibility and C++ execution speed.
 
