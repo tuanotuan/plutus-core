@@ -5,15 +5,11 @@ import os
 import time
 
 def extract_and_join(price_file, vol_file, f1_ticker, f2_ticker):
-    print("\n========================================")
-    print(" [ETL PIPELINE] MAP-REDUCE JOINER       ")
-    print("========================================")
-    
     target_tickers = [f1_ticker, f2_ticker]
     print(f"[*] Mục tiêu khóa chặt: {target_tickers}")
     
     if not os.path.exists(price_file) or not os.path.exists(vol_file):
-        print(f"[-] LỖI: Đéo thấy file CSV. Mày để nó ở {price_file} chưa?")
+        print(f"Not found {price_file} or {vol_file}. Please check the paths.")
         return
 
     # ---------------------------------------------------------
