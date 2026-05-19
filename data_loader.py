@@ -6,7 +6,7 @@ class DataLoader:
         self.file_path = file_path
 
     def load_and_clean(self):
-        print(f"[*] Đang nạp dữ liệu từ: {self.file_path} ...")
+        print(f"[*] Input Data from: {self.file_path} ...")
         df = pd.read_csv(self.file_path)
         # chuyen cot Datetime sang Timestamp (int64) de truyen sang C++
         df['datetime'] = pd.to_datetime(df['datetime'])
