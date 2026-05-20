@@ -17,10 +17,9 @@ if __name__ == "__main__":
         with open(opt_file, "r") as f:
             opt_res = json.load(f)
             config.WINDOW_SIZE = opt_res.get("best_window", config.WINDOW_SIZE)
-            print(f"[*] HỆ THỐNG THÔNG MINH: Đã nạp WINDOW_SIZE = {config.WINDOW_SIZE} từ Optimization.")
+            print(f"Optimized WINDOW_SIZE = {config.WINDOW_SIZE} from Optimization.")
     else:
-        print(f"[!] CẢNH BÁO: Không thấy file tối ưu. Chạy với Window mặc định = {config.WINDOW_SIZE}")
-    # ----------------------------------------
+        print(f"Default WINDOW_SIZE = {config.WINDOW_SIZE}")
     loader = DataLoader("data/is/VN30F1M_data.csv")
     engine_bridge = CppEngineBridge("./cpp_engine/vwap_engine.so")
 
